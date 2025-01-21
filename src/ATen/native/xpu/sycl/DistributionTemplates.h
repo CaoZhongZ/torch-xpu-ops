@@ -198,7 +198,7 @@ void distribution_nullary_kernel(
         decltype(stride0)>(
         numel, rng_engine_inputs, dist_func, transform_func, out_data, stride0);
     sycl_kernel_submit(
-        num_groups * group_size, group_size, getCurrentSYCLQueue(), caller);
+        32 * group_size, group_size, getCurrentSYCLQueue(), caller);
 
     scalar_t* host_m = (scalar_t *)malloc(numel * sizeof(scalar_t));
     auto queue = getCurrentSYCLQueue();
