@@ -94,16 +94,16 @@ struct DistributionElementwiseKernelFunctor {
     int num_groups = item.get_group_range(0);
     int idx = item.get_global_linear_id();
 
-    auto seeds = philox_unpack(philox_args_);
-    randStatePhilox4_32_10_t state;
-    rand_init(std::get<0>(seeds), idx, std::get<1>(seeds), &state);
+    // auto seeds = philox_unpack(philox_args_);
+    // randStatePhilox4_32_10_t state;
+    // rand_init(std::get<0>(seeds), idx, std::get<1>(seeds), &state);
 
     int full_tile_work_size = group_size * num_groups * unroll_factor;
     int rounded_size =
         ((numel_ - 1) / full_tile_work_size + 1) * full_tile_work_size;
     for (int linear_index = idx; linear_index < rounded_size;
          linear_index += full_tile_work_size) { // global range stride
-      auto rand = dist_func_(&state);
+      // auto rand = dist_func_(&state);
 #pragma unroll
       for (int i = 0; i < unroll_factor; i++) {
         int li = linear_index + group_size * num_groups * i;
@@ -111,11 +111,11 @@ struct DistributionElementwiseKernelFunctor {
           if constexpr (std::is_integral<offset_calc_t>::value) {
             scalar_t* out = (scalar_t*)&out_data_[offset_calc_ * li];
             *out = (scalar_t) numel_; //transform_func_(static_cast<accscalar_t>((&rand.x)[i]));
-          } else {
+          } /*else {
             auto offsets = offset_calc_.get(li);
             scalar_t* out = (scalar_t*)&out_data_[offsets[0]];
             *out = transform_func_(static_cast<accscalar_t>((&rand.x)[i]));
-          }
+          }*/
         }
       }
       // Some state (e.g. MTGP32) need to add barrier there.
