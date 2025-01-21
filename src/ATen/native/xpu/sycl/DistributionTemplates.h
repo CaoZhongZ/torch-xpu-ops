@@ -110,7 +110,7 @@ struct DistributionElementwiseKernelFunctor {
         if (li < numel_) {
           if constexpr (std::is_integral<offset_calc_t>::value) {
             scalar_t* out = (scalar_t*)&out_data_[offset_calc_ * li];
-            *out = transform_func_(static_cast<accscalar_t>((&rand.x)[i]));
+            *out = (scalar_t) numel_; //transform_func_(static_cast<accscalar_t>((&rand.x)[i]));
           } else {
             auto offsets = offset_calc_.get(li);
             scalar_t* out = (scalar_t*)&out_data_[offsets[0]];
